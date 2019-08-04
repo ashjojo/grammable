@@ -5,6 +5,15 @@ RSpec.describe GramsController, type: :controller do
 
     describe "grams#destroy action" do
 
+      it "shouldn't allow users who didn't create the gram to destroy it" do
+        gram = FactoryBot.create(:gram)
+        user = FactoryBot.create(:user)
+        sign_in user
+        delete :destroy, params: { id: gram.id }
+        expect(response).to have_http_status(:forbidden)
+
+  end
+
 
        it "shouldn't let unauthenticated users destroy a gram" do
       gram = FactoryBot.create(:gram)
@@ -33,6 +42,15 @@ RSpec.describe GramsController, type: :controller do
   end
 
   describe "grams#update action" do
+
+      it "shouldn't let users who didn't create the gram update it" do
+          gram = FactoryBot.create(:gram)
+          user = FactoryBot.create(:user)
+          sign_in user
+          patch :update, params: { id: gram.id, gram: { message: 'wahoo' } }
+          expect(response).to have_http_status(:forbidden)
+
+  end
 
 
      it "shouldn't let unauthenticated users update a gram" do
@@ -77,6 +95,15 @@ RSpec.describe GramsController, type: :controller do
 
 
   describe "grams#edit action" do
+
+    it "shouldn't let a user who did not create the gram edit a gram" do
+      gram = FactoryBot.create(:gram)
+      user = FactoryBot.create(:user)
+      sign_in user
+      get :edit, params: { id: gram.id }
+      expect(response).to have_http_status(:forbidden)
+
+  end
 
 
     it "shouldn't let unauthenticated users edit a gram" do
